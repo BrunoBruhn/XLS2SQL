@@ -1,15 +1,15 @@
-import mysql.connector, MySQLdb, xlrd, xlwt,os
+import mysql.connector, MySQLdb, xlrd, xlwt, os, getSheetNames
 
 # detecting xls file
 dir_path = os.path.dirname(os.path.realpath(__file__))
-all_files = os.listdir(dir_path+"/Excel Files/")
+all_files = os.listdir(dir_path+"/ExcelFiles/")
 if len(all_files)>1:
-    print "More than one file detected in the 'Excel Files' folder. Use different worksheets to create multiple tables. A single .xls file represents a database."
+    print "More than one file detected in the 'ExcelFiles' folder. Use different worksheets to create multiple tables. A single .xls file represents a database."
     exit()
 
 #importing xls file
-excel_file=dir_path+"/Excel Files/"+all_files[0]
-length_front_cutoff= len(dir_path+"/Excel Files/")
+excel_file=dir_path+"/ExcelFiles/"+all_files[0]
+length_front_cutoff= len(dir_path+"/ExcelFiles/")
 length_back_cutoff=len(".xls")
 
 #set up database name
@@ -25,7 +25,6 @@ mydb=mysql.connector.connect(host="localhost",user="root")
 #init cursor
 mycursor=mydb.cursor()
 
-
 #delete database
 create_statement = "DROP DATABASE {:s}".format(db_name)
 mycursor.execute(create_statement)
@@ -39,11 +38,18 @@ mycursor.execute(create_statement)
 create_statement = "USE {:s}".format(db_name)
 mycursor.execute(create_statement)
 
+#list all sheet names in a workbook
+list_of_sheet_tuples=getSheetNames.getting(excel_file)
+list_of_sheet_names=[]
+for i in range(len(list_of_sheet_tuples)):
+    list_of_sheet_names.append(list_of_sheet_tuples[i][1])
+
 #count nr of sheets in workbook
-number_of_sheets = len(workbook.sheet_names()) 
+number_of_sheets = len(list_of_sheet_names) 
+
 
 ######################################################################################################################################################################################################################################################################################################################################################
-'''JUST 1 TABLE'''
+#sheetnames_own=
 worksheet = workbook.sheet_by_index(0)
 
 #counting number_of_rows and columns
