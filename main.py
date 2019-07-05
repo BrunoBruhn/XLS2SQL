@@ -48,7 +48,7 @@ number_of_sheets = len(workbook.sheet_names())
 ######################################################################################################################################################################################################################################################################################################################################################
 '''JUST 1 TABLE'''
 worksheet = workbook.sheet_by_index(0)
-
+#nice to meet you, I'm on the Desktop
 #counting number_of_rows and columns
 number_of_rows=worksheet.nrows-1
 number_of_columns=worksheet.ncols
