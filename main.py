@@ -42,20 +42,16 @@ mycursor.execute(create_statement)
 #count nr of sheets in workbook
 number_of_sheets = len(workbook.sheet_names()) 
 
-
-# HALLO??
-# I'm here in Downloads!
-
 ######################################################################################################################################################################################################################################################################################################################################################
 '''JUST 1 TABLE'''
 worksheet = workbook.sheet_by_index(0)
-#nice to meet you, I'm on the Desktop
+
 #counting number_of_rows and columns
 number_of_rows=worksheet.nrows-1
 number_of_columns=worksheet.ncols
 
 #create table
-mycursor.execute("CREATE TABLE Test (id MEDIUMINT NOT NULL AUTO_INCREMENT,PRIMARY KEY (id));")
+mycursor.execute("CREATE TABLE Test (ID MEDIUMINT NOT NULL AUTO_INCREMENT,PRIMARY KEY (ID));")
 
 #identify datatype and name of column, then create column in sql
 for i in range(number_of_columns):
