@@ -4,8 +4,8 @@ import mysql.connector, MySQLdb, xlrd, xlwt, os, getSheetNames
 dir_path = os.path.dirname(os.path.realpath(__file__))
 all_files = os.listdir(dir_path+"/ExcelFiles/")
 if len(all_files)>1:
-    print "More than one file detected in the 'ExcelFiles' folder. Use different worksheets to create multiple tables. A single .xls file represents a database."
-    exit()
+	print "More than one file detected in the 'ExcelFiles' folder. Use different worksheets to create multiple tables. A single .xls file represents a database."
+	exit()
 
 #importing xls file
 excel_file=dir_path+"/ExcelFiles/"+all_files[0]
@@ -41,7 +41,8 @@ mycursor.execute(create_statement)
 list_of_sheet_tuples=getSheetNames.getting(excel_file)
 list_of_sheet_names=[]
 for i in range(len(list_of_sheet_tuples)):
-    list_of_sheet_names.append(list_of_sheet_tuples[i][1])
+	
+	list_of_sheet_names.append(list_of_sheet_tuples[i][1])
 
 #count nr of sheets in workbook
 number_of_sheets = len(list_of_sheet_names) 
@@ -49,64 +50,51 @@ number_of_sheets = len(list_of_sheet_names)
 ######################################################################################################################################################################################################################################################################################################################################################
 
 for j in range(number_of_sheets):
-    worksheet = workbook.sheet_by_index(j)
+	worksheet = workbook.sheet_by_index(j)
 
-    #counting number_of_rows and columns
-    number_of_rows=worksheet.nrows-1
-    number_of_columns=worksheet.ncols
+	#counting number_of_rows and columns
+	number_of_rows=worksheet.nrows-1
+	number_of_columns=worksheet.ncols
 
-    #create table
-    mycursor.execute("CREATE TABLE %s (ID MEDIUMINT NOT NULL AUTO_INCREMENT,PRIMARY KEY (ID));" % list_of_sheet_names[j])
+	try:
+		mycursor.execute("CREATE TABLE %s (id MEDIUMINT NOT NULL AUTO_INCREMENT,PRIMARY KEY (id));" % list_of_sheet_names[j])
+		
+	except:
+		print "An error occurred while creating a table. Are the sheets all named properly (not with numbers!) ?"
+		break
 
-    #identify datatype and name of column, then create column in sql
-    for i in range(number_of_columns):
-        
-        column_title=worksheet.cell(0,i).value
-        datatype_of_column=type(worksheet.cell(1,i).value)
+	#identify datatype and name of column, then create column in sql
+	for i in range(number_of_columns):
+		
+		column_title=worksheet.cell(0,i).value
+		datatype_of_column=type(worksheet.cell(1,i).value)
 
-        if datatype_of_column==float:
-            cell_type="FLOAT(10)"
-        elif datatype_of_column==int:
-            cell_type="INT(10)"
-        elif datatype_of_column==unicode or datatype_of_column==str:
-            cell_type="VARCHAR(100)"
-        elif datatype_of_column==bool:
-            cell_type="BINARY"
-        else:
-            print ('Datatype at column %s not recognized. Set to float.', i)
-        
-      #  mycursor.execute("ALTER TABLE Test ADD (%s %s)" % (column_title, cell_type))
+		if datatype_of_column==float:
+			cell_type="FLOAT(10)"
+		elif datatype_of_column==int:
+			cell_type="INT(10)"
+		elif datatype_of_column==unicode or datatype_of_column==str:
+			cell_type="VARCHAR(100)"
+		elif datatype_of_column==bool:
+			cell_type="BINARY"
+		else:
+			print ('Datatype at column %s not recognized. Set to float.', i)
 
-        mycursor.execute("ALTER TABLE %s ADD %s %s" % (list_of_sheet_names[j], column_title, cell_type))
+		mycursor.execute("ALTER TABLE %s ADD %s %s" % (list_of_sheet_names[j], column_title, cell_type))
 
-    '''
-    #insert values to columns
-    for i in range(number_of_columns):
-        column_title=worksheet.cell(0,i).value
+	for n in range(1,number_of_rows+1):
 
-        for n in range(1,number_of_rows+1):
-
-            value_for_table=worksheet.cell(n,i).value
-            print n,i,column_title, value_for_table
-
-            query=("INSERT INTO Test (%s)" % column_title) + " VALUES (%s)"
-            mycursor.execute(query, (value_for_table,))
-            #mycursor.execute("INSERT INTO Test (%s) VALUES (%s)", (column_title,value_for_table))
-        '''
-
-    for n in range(1,number_of_rows+1):
-########
-        query="INSERT INTO {} (".format(list_of_sheet_names[j])
-        query_values="("
-        values=[]
-        for i in range(number_of_columns):
-            column_title=worksheet.cell(0,i).value
-            value_for_table = worksheet.cell(n, i).value
-            query=query+column_title if i==0 else query+','+column_title
-            query_values=query_values+"%s" if i==0 else query_values+',%s'
-            values.append(value_for_table)
-        query=query+') VALUES '+query_values+')'
-        mycursor.execute(query, values)
+		query="INSERT INTO {} (".format(list_of_sheet_names[j])
+		query_values="("
+		values=[]
+		for i in range(number_of_columns):
+			column_title=worksheet.cell(0,i).value
+			value_for_table = worksheet.cell(n, i).value
+			query=query+column_title if i==0 else query+','+column_title
+			query_values=query_values+"%s" if i==0 else query_values+',%s'
+			values.append(value_for_table)
+		query=query+') VALUES '+query_values+')'
+		mycursor.execute(query, values)
 
 mydb.commit()
 mydb.close()
