@@ -25,9 +25,9 @@ mydb=mysql.connector.connect(host="localhost",user="root")
 #init cursor
 mycursor=mydb.cursor()
 
-#delete database
-create_statement = "DROP DATABASE {:s}".format(db_name)
-mycursor.execute(create_statement)
+##delete database
+#create_statement = "DROP DATABASE {:s}".format(db_name)
+#mycursor.execute(create_statement)
 
 #create and select database
 create_statement = "CREATE DATABASE {:s}".format(db_name)
@@ -60,7 +60,7 @@ for j in range(number_of_sheets):
 		mycursor.execute("CREATE TABLE %s (id MEDIUMINT NOT NULL AUTO_INCREMENT,PRIMARY KEY (id));" % list_of_sheet_names[j])
 		
 	except:
-		print "An error occurred while creating a table. Are the sheets all named properly (not with numbers!) ?"
+		print "An error occurred while creating a table. Are the sheets all named properly (no special characters and not solely a number!) ?"
 		break
 
 	#identify datatype and name of column, then create column in sql
